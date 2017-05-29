@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX DEMO</title>
+    <style>
+        *{margin: 0;padding: 0;box-sizing: border-box;}
+        ol{list-style: none;}
+        #container img{width: 150px;}
+        #container {display: flex;justify-content: center;flex-wrap: wrap;max-width: 800px;}
+    </style>
+</head>
+
+<body>
+<button id="btn">加载</button>
+<ol id="container"></ol>
+<script>
+    let page = 1;
+    let btn = document.getElementById("btn");
+    let con = document.getElementById("container");
+    btn.onclick = function () {
+        let req = new XMLHttpRequest();
+        req.open("GET","/page"+page+".json");
+        req.onload = function () {
+            page += 1;
+            let object = JSON.parse(req.responseText);
+            console.log(object)
+            let nextPage = object.hasNextPage;
+            console.log(nextPage);
+            if(!nextPage){
+                btn.disabled = true;
+            }
+            let array = object.items;
+            array.forEach(function (item,index) {
+                let li = document.createElement("li");
+                let img = document.createElement("img");
+                li.appendChild(img);
+                img.src=item.url;
+                con.appendChild(li);
+            })
+
+        }
+        req.send();
+    }
+</script>
+</body>
+</html>
